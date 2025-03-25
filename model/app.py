@@ -6,11 +6,17 @@ import io
 from pydub import AudioSegment
 from werkzeug.utils import secure_filename
 
+from flask_cors import CORS  # Import CORS
+
+
 # Initialize Flask app
 app = Flask(__name__)
 
+CORS(app)
+
+
 # Load the pre-trained model
-model = load_model('best_model.keras')
+# model = load_model('best_model.keras')
 
 # Allowed file extensions for audio files
 ALLOWED_EXTENSIONS = {'wav', 'mp3', 'flac'}
@@ -35,6 +41,9 @@ def predict():
 
         # If the file has an allowed extension
         if file and allowed_file(file.filename):
+
+            response = {'prediction':0}  # Return as integer (class label)
+            return jsonify(response)
             # Secure the filename
             filename = secure_filename(file.filename)
 

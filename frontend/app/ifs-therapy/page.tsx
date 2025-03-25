@@ -387,6 +387,36 @@ export default function IFSTherapy() {
     document.body.removeChild(a);
   };
 
+  // uploading
+  const uploadRecording = () => {
+    if (audioChunks.length === 0) {
+      toast("No audio recorded.");
+      return;
+    }
+  
+    const blob = new Blob(audioChunks, { type: "audio/wav" });
+  
+    // Create a new FormData object to send the file
+    const formData = new FormData();
+    formData.append('file', blob, 'full_recording.wav');
+  
+    // Send the POST request with the file
+    fetch('http://localhost:5000/predict',{
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('File uploaded successfully:', data);
+      toast("Recording uploaded successfully.");
+    })
+    .catch(error => {
+      console.error('Error uploading file:', error);
+      toast("Error uploading recording.");
+    });
+  };
+  
+
   // End the current therapy session and generate exercises
   const endSession = () => {
     if (!currentSession) return
@@ -511,7 +541,9 @@ export default function IFSTherapy() {
         setMessages((prev) => [...prev, botMessage]);
   
         // Update session progress based on message index
-        setSessionProgress((prev) => Math.min(prev + (100 / ifsPrompts.length), 100));
+        // setSessionProgress((prev) => Math.min(prev + (100 / ifsPrompts.length), 100));
+        setSessionProgress((prev) => prev + 100);
+
       }
     } catch (error) {
       console.error("Error fetching AI response:", error);
@@ -534,6 +566,12 @@ export default function IFSTherapy() {
     //   description: "Your personalized exercises have been saved to your profile.",
     // })
   }
+
+  useEffect(()=>{
+    if(sessionProgress == 100){
+      uploadRecording()
+    }
+  },[sessionProgress])
 
   return (
     <div className="space-y-6">
