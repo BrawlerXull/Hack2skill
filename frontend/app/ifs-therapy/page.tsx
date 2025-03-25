@@ -450,7 +450,7 @@ export default function IFSTherapy() {
         <TabsList>
           <TabsTrigger value="chat">Therapy Session</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
-          <TabsTrigger value="history">Session History</TabsTrigger>
+
         </TabsList>
 
         <TabsContent value="chat" className="space-y-4">
@@ -617,68 +617,6 @@ export default function IFSTherapy() {
                     }}
                   >
                     Start a Session
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="history" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Session History</CardTitle>
-              <CardDescription>Review your past therapy sessions and exercises</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {pastSessions.length > 0 ? (
-                <div className="space-y-4">
-                  {pastSessions.map((session) => (
-                    <Card key={session.id}>
-                      <CardHeader className="pb-2">
-                        <div className="flex justify-between items-center">
-                          <CardTitle className="text-lg">Session on {format(session.date, "MMMM d, yyyy")}</CardTitle>
-                          <Badge>
-                            <Clock className="mr-1 h-3 w-3" />
-                            {format(session.date, "h:mm a")}
-                          </Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="pb-2">
-                        <p className="text-sm text-muted-foreground mb-2">
-                          {session.messages.length} messages exchanged
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {session.exercises.map((exercise) => (
-                            <Badge key={exercise.id} variant="outline">
-                              {exercise.title}
-                            </Badge>
-                          ))}
-                        </div>
-                      </CardContent>
-                      <CardFooter>
-                        <Button variant="outline" className="w-full">
-                          View Session Details
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-[400px] text-center space-y-4">
-                  <Clock className="h-16 w-16 text-muted-foreground" />
-                  <h3 className="text-xl font-semibold">No Past Sessions</h3>
-                  <p className="text-muted-foreground max-w-md">
-                    Your completed therapy sessions will appear here for future reference.
-                  </p>
-                  <Button
-                    onClick={() => {
-                      setActiveTab("chat")
-                      startSession()
-                    }}
-                  >
-                    Start Your First Session
                   </Button>
                 </div>
               )}
