@@ -54,196 +54,163 @@ type ExerciseType = {
   completed: boolean
 }
 
-type PartType = "protector" | "exile" | "manager" | "firefighter" | "self"
-
-// IFS therapy prompts and responses
-const ifsPrompts = [
-  {
-    id: "intro",
-    content:
-      "Welcome to your IFS therapy session. I'm here to help you explore your inner family system. How are you feeling today?",
-    followUp: null,
-  },
-  {
-    id: "identify-parts",
-    content:
-      "In IFS therapy, we recognize different parts of ourselves. These might include protectors, exiles, and the core Self. Can you identify any parts that feel active right now?",
-    followUp: "parts-exploration",
-  },
-  {
-    id: "parts-exploration",
-    content: "Tell me more about this part. What does it feel like? Where do you feel it in your body?",
-    followUp: "parts-purpose",
-  },
-  {
-    id: "parts-purpose",
-    content: "What do you think this part is trying to do for you? How might it be trying to protect you?",
-    followUp: "self-compassion",
-  },
-  {
-    id: "self-compassion",
-    content: "Can you approach this part with curiosity and compassion? What might it need from you right now?",
-    followUp: "unburdening",
-  },
-  {
-    id: "unburdening",
-    content:
-      "If this part could release its burden, what would that feel like? Can you imagine giving it what it needs?",
-    followUp: "integration",
-  },
-  {
-    id: "integration",
-    content: "How do you feel toward this part now? Has your relationship with it shifted in any way?",
-    followUp: "session-reflection",
-  },
-  {
-    id: "session-reflection",
-    content: "We're nearing the end of our session. What insights have you gained about your inner system today?",
-    followUp: "session-close",
-  },
-  {
-    id: "session-close",
-    content:
-      "Thank you for exploring your inner world today. I'll generate some personalized exercises based on our conversation to help you continue this work.",
-    followUp: null,
-  },
-]
-
-// Sample exercises based on different parts
 const exerciseTemplates = {
-  protector: [
+  disgust: [
     {
-      title: "Dialogue with Your Protector",
-      description: "A journaling exercise to communicate with your protective part",
-      type: "journaling" as const,
+      title: "Releasing Disgust Through Journaling",
+      description: "A journaling exercise to express and release feelings of disgust",
+      type: "journaling",
       instructions: [
         "Find a quiet space where you won't be interrupted",
-        "Write a letter to your protector part, acknowledging its role",
-        "Ask what it's trying to protect you from",
-        "Write a response from this part's perspective",
-        "Reflect on what you learned from this dialogue",
+        "Write about what specifically is causing your feelings of disgust",
+        "Describe how these feelings manifest in your body",
+        "Explore why this situation or object triggers such a strong emotional response",
+        "Reflect on what you can learn from these feelings and how to release them",
       ],
     },
     {
-      title: "Safe Place Visualization for Protectors",
-      description: "A visualization exercise to help your protector feel secure",
-      type: "visualization" as const,
+      title: "Grounding and Cleansing Visualization",
+      description: "A visualization exercise to cleanse and release feelings of disgust",
+      type: "visualization",
       instructions: [
         "Sit comfortably and close your eyes",
-        "Visualize your protector part in its current form",
-        "Imagine a safe, peaceful environment for this part",
-        "Ask what would help it feel more secure",
-        "Practice this visualization daily for 5-10 minutes",
+        "Visualize a wave of warm light slowly washing over you, starting at your feet",
+        "Imagine the light cleansing and neutralizing the feeling of disgust from your body",
+        "With each breath, release these feelings into the light",
+        "Finish the visualization by imagining yourself feeling clean and refreshed",
       ],
     },
   ],
-  exile: [
+  happy: [
     {
-      title: "Healing the Exile Meditation",
-      description: "A guided meditation to connect with and comfort exiled parts",
-      type: "meditation" as const,
-      instructions: [
-        "Find a quiet, comfortable space",
-        "Close your eyes and focus on your breath for 2 minutes",
-        "Gently bring awareness to the exiled part",
-        "Imagine your adult self comforting this younger, wounded part",
-        "Offer this part what it needed but didn't receive in the past",
-        "Practice this meditation for 10-15 minutes daily",
-      ],
-    },
-    {
-      title: "Exile Unburdening Ritual",
-      description: "A symbolic ritual to help release burdens from exiled parts",
-      type: "reflection" as const,
-      instructions: [
-        "Create or find a small object to represent the burden",
-        "Hold the object while connecting with the exiled part",
-        "Acknowledge the pain this part has carried",
-        "Release the object in a meaningful way (bury it, place it in flowing water, etc.)",
-        "Journal about the experience afterward",
-      ],
-    },
-  ],
-  manager: [
-    {
-      title: "Appreciating Your Manager Parts",
-      description: "A reflection exercise to acknowledge the role of manager parts",
-      type: "reflection" as const,
-      instructions: [
-        "List all the ways your manager part has tried to keep you safe",
-        "Acknowledge the difficult job this part has had",
-        "Consider how this part developed and when it first appeared",
-        "Reflect on how you might work collaboratively with this part",
-        "Write a thank you note to this part",
-      ],
-    },
-    {
-      title: "Manager Part Relaxation",
-      description: "A meditation to help manager parts ease their vigilance",
-      type: "meditation" as const,
-      instructions: [
-        "Sit comfortably with eyes closed",
-        "Locate the manager part in your body",
-        "Breathe deeply into that area",
-        "Assure this part that it can take a break while you're in a safe space",
-        "Practice allowing this part to relax for 5-10 minutes",
-      ],
-    },
-  ],
-  firefighter: [
-    {
-      title: "Alternative Responses for Firefighters",
-      description: "A journaling exercise to develop healthier coping strategies",
-      type: "journaling" as const,
-      instructions: [
-        "Identify situations that trigger your firefighter part",
-        "List the current coping mechanisms this part uses",
-        "For each mechanism, brainstorm 2-3 alternative responses",
-        "Create a plan to implement one new response this week",
-        "Journal about the results",
-      ],
-    },
-    {
-      title: "Grounding Techniques for Intense Emotions",
-      description: "Practical techniques to help when firefighter parts are activated",
-      type: "reflection" as const,
-      instructions: [
-        "Practice the 5-4-3-2-1 sensory grounding technique",
-        "Try box breathing (4 counts in, 4 hold, 4 out, 4 hold)",
-        "Use cold water or ice on wrists to interrupt intense emotional states",
-        "Create a playlist of calming music",
-        "Develop a list of self-soothing activities you can turn to",
-      ],
-    },
-  ],
-  self: [
-    {
-      title: "Connecting with Your Core Self",
-      description: "A meditation to strengthen connection with your authentic Self",
-      type: "meditation" as const,
+      title: "Gratitude Journaling",
+      description: "A journaling exercise to amplify feelings of happiness and gratitude",
+      type: "journaling",
       instructions: [
         "Find a quiet space and sit comfortably",
-        "Focus on your breath for several minutes",
-        "Recall a time when you felt calm, clear, and compassionate",
-        "Notice the qualities of your Self: curiosity, compassion, clarity, etc.",
-        "Practice embodying these qualities for 10-15 minutes",
-        "Return to this meditation regularly to strengthen Self energy",
+        "Write down three things that brought you joy today",
+        "Describe the emotions you felt and why they were significant",
+        "Reflect on how you can bring more of these positive moments into your life",
+        "Commit to practicing gratitude daily for at least one week",
       ],
     },
     {
-      title: "Self-Led Decision Making",
-      description: "A journaling exercise to practice making decisions from Self",
-      type: "journaling" as const,
+      title: "Happiness Affirmation Meditation",
+      description: "A meditation to enhance feelings of happiness and positivity",
+      type: "meditation",
       instructions: [
-        "Identify a decision you're currently facing",
-        "Notice which parts have strong opinions about this decision",
-        "Thank these parts for their input and ask them to step back",
-        "Connect with your Self energy (calm, curious, compassionate)",
-        "From this Self perspective, journal about what feels right",
-        "Notice the difference between part-led and Self-led decisions",
+        "Sit comfortably with your eyes closed",
+        "Take several deep breaths, letting go of any tension in your body",
+        "Repeat the following affirmations silently or out loud: 'I am worthy of joy', 'I attract happiness', 'I embrace the positive moments in my life'",
+        "Sit in silence for a few minutes, focusing on the words and the feelings they bring",
+        "Practice this daily to cultivate a habit of happiness",
       ],
     },
   ],
+  sad: [
+    {
+      title: "Healing Through Tears",
+      description: "A reflective journaling exercise to process sadness",
+      type: "journaling",
+      instructions: [
+        "Find a quiet, comfortable place",
+        "Write about the sadness you're feeling, letting the words flow freely",
+        "Allow yourself to feel the emotion fully, without judgment or resistance",
+        "After writing, reflect on any lessons or insights that arise from this sadness",
+        "Commit to expressing your emotions through journaling regularly",
+      ],
+    },
+    {
+      title: "Comforting Visualization for Sadness",
+      description: "A visualization exercise to bring comfort to feelings of sadness",
+      type: "visualization",
+      instructions: [
+        "Sit comfortably, close your eyes, and take several deep breaths",
+        "Visualize a nurturing, loving figure approaching you and offering comfort",
+        "Let this figure embrace you or offer words of reassurance, acknowledging your sadness",
+        "Focus on the feelings of warmth and care you receive from this image",
+        "Allow this comfort to stay with you throughout the day",
+      ],
+    },
+  ],
+  fear: [
+    {
+      title: "Facing Your Fear with Courage",
+      description: "A journaling exercise to explore and confront your fears",
+      type: "journaling",
+      instructions: [
+        "Find a quiet space to sit and reflect",
+        "Write about the fear you're experiencing and what it feels like in your body",
+        "Describe the worst-case scenario that you're imagining",
+        "Challenge your fear by writing about ways you can respond with courage",
+        "Reflect on your capacity to face fear and take small steps towards it",
+      ],
+    },
+    {
+      title: "Breathing Through Fear",
+      description: "A grounding breathing technique to help calm fearful thoughts",
+      type: "meditation",
+      instructions: [
+        "Sit in a comfortable position with your eyes closed",
+        "Inhale deeply through your nose for 4 counts, hold for 4 counts, exhale through your mouth for 4 counts",
+        "Focus on your breath, letting go of any fearful thoughts with each exhale",
+        "Repeat this cycle for 5-10 minutes, allowing yourself to feel grounded and calm",
+        "Practice daily to reduce fear responses",
+      ],
+    },
+  ],
+  angry: [
+    {
+      title: "Releasing Anger Through Journaling",
+      description: "A journaling exercise to process and release anger",
+      type: "journaling",
+      instructions: [
+        "Find a quiet space where you can write freely",
+        "Write about the source of your anger, without holding back",
+        "Explore what triggered your anger and how it affects your body",
+        "Reflect on any deeper feelings behind the anger, such as hurt or fear",
+        "End the journaling session by writing about ways you can release or transform this anger",
+      ],
+    },
+    {
+      title: "Anger Release Breathwork",
+      description: "A breathwork exercise to release the intensity of anger",
+      type: "meditation",
+      instructions: [
+        "Sit comfortably and take a few deep breaths",
+        "Inhale deeply through your nose, hold for 3 counts, and exhale forcefully through your mouth",
+        "Repeat this process 5-10 times, focusing on releasing tension and anger with each exhale",
+        "Allow your breath to guide you back to a state of calm",
+        "Practice this breathwork whenever anger arises",
+      ],
+    },
+  ],
+  neutral: [
+    {
+      title: "Mindful Presence Practice",
+      description: "A grounding exercise to help you connect with your neutral state",
+      type: "meditation",
+      instructions: [
+        "Sit comfortably and close your eyes",
+        "Focus on your breath and bring your attention to the present moment",
+        "If your mind starts to wander, gently guide it back to your breath",
+        "Notice how your body feels in this neutral space",
+        "Allow yourself to simply be in this moment for 5-10 minutes",
+      ],
+    },
+    {
+      title: "Self-Reflection Journaling",
+      description: "A journaling exercise to connect with your neutral, balanced self",
+      type: "journaling",
+      instructions: [
+        "Find a quiet space to sit and reflect",
+        "Write about your current emotional state and how you feel in this neutral space",
+        "Consider the balance between your emotions, and how you can maintain this state",
+        "Explore any areas where you feel stuck or uninspired, and reflect on ways to bring more energy into your life",
+        "Commit to checking in with your neutral self regularly",
+      ],
+    },
+  ]
 }
 
 // Helper function to generate a unique ID
@@ -257,7 +224,7 @@ export default function IFSTherapy() {
   const [sessionProgress, setSessionProgress] = useState(0)
   const [pastSessions, setPastSessions] = useState<SessionType[]>([])
   const [currentSession, setCurrentSession] = useState<SessionType | null>(null)
-  const [generatedExercises, setGeneratedExercises] = useState<ExerciseType[]>([])
+
   const [activeTab, setActiveTab] = useState("chat")
   const [showIntroDialog, setShowIntroDialog] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -273,7 +240,7 @@ export default function IFSTherapy() {
     const initialMessage: MessageType = {
       id: generateId(),
       role: "bot",
-      content: ifsPrompts[0].content,
+      content: "Welcome to your IFS therapy session. I'm here to help you explore your inner family system. How are you feeling today?",
       timestamp: new Date(),
     }
 
@@ -300,6 +267,7 @@ export default function IFSTherapy() {
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
+  const [mood, setMood] = useState<"disgust" | "sad" | "happy" | "fear" | "angry" | "neutral">("sad");
   
   let recognition: SpeechRecognition | null = null;
   if (typeof window !== "undefined") {
@@ -408,6 +376,32 @@ export default function IFSTherapy() {
     .then(response => response.json())
     .then(data => {
       console.log('File uploaded successfully:', data);
+    //   emotion_mapping = {
+    //     'disgust': 0,
+    //     'happy': 1,
+    //     'sad': 2,
+    //     'fear': 3,
+    //     'angry': 4,
+    //     'neutral': 5
+    // }
+    if(data.prediction == 0){
+      setMood('disgust')
+    }else if(data.prediction == 1){
+      setMood('happy')         
+    }
+    else if(data.prediction == 2){
+      setMood('sad')
+    }
+    else if(data.prediction == 3){
+      setMood('fear')
+    }
+    else if(data.prediction == 4){  
+      setMood('angry')
+    }
+    else if(data.prediction == 5){
+      setMood('neutral')
+    }
+
       toast("Recording uploaded successfully.");
     })
     .catch(error => {
@@ -415,91 +409,6 @@ export default function IFSTherapy() {
       toast("Error uploading recording.");
     });
   };
-  
-
-  // End the current therapy session and generate exercises
-  const endSession = () => {
-    if (!currentSession) return
-
-    // Analyze the conversation to determine which parts were discussed
-    const sessionText = messages
-      .map((m) => m.content)
-      .join(" ")
-      .toLowerCase()
-
-    // Identify which parts were discussed based on keywords
-    const partMentioned = {
-      protector: sessionText.includes("protect") || sessionText.includes("guard") || sessionText.includes("shield"),
-      exile:
-        sessionText.includes("hurt") ||
-        sessionText.includes("pain") ||
-        sessionText.includes("wound") ||
-        sessionText.includes("young"),
-      manager:
-        sessionText.includes("control") ||
-        sessionText.includes("organize") ||
-        sessionText.includes("plan") ||
-        sessionText.includes("perfect"),
-      firefighter:
-        sessionText.includes("distract") ||
-        sessionText.includes("numb") ||
-        sessionText.includes("avoid") ||
-        sessionText.includes("escape"),
-      self:
-        sessionText.includes("calm") ||
-        sessionText.includes("curious") ||
-        sessionText.includes("compassion") ||
-        sessionText.includes("clarity"),
-    }
-
-    // Generate personalized exercises based on the parts discussed
-    const exercises: ExerciseType[] = []
-
-    Object.entries(partMentioned).forEach(([part, mentioned]) => {
-      if (mentioned && exerciseTemplates[part as PartType]) {
-        // Select 1-2 exercises for each identified part
-        const selectedExercises = exerciseTemplates[part as PartType]
-          .sort(() => 0.5 - Math.random())
-          .slice(0, Math.floor(Math.random() * 2) + 1)
-
-        selectedExercises.forEach((exercise) => {
-          exercises.push({
-            ...exercise,
-            id: generateId(),
-            completed: false,
-          })
-        })
-      }
-    })
-
-    // If no specific parts were identified, add a general Self exercise
-    if (exercises.length === 0) {
-      exercises.push({
-        ...exerciseTemplates.self[0],
-        id: generateId(),
-        completed: false,
-      })
-    }
-
-    setGeneratedExercises(exercises)
-
-    // Update and save the session
-    const completedSession: SessionType = {
-      ...currentSession,
-      exercises,
-      completed: true,
-    }
-
-    setPastSessions([completedSession, ...pastSessions])
-    setCurrentSession(null)
-    setIsSessionActive(false)
-    setActiveTab("exercises")
-
-    // toast({
-    //   title: "Session Completed",
-    //   description: "Your personalized exercises have been generated based on our conversation.",
-    // })
-  }
 
   // Handle sending a message
   const handleSendMessage = async () => {
@@ -551,14 +460,6 @@ export default function IFSTherapy() {
   };
   
 
-
-  // Toggle exercise completion status
-  const toggleExerciseCompletion = (exerciseId: string) => {
-    setGeneratedExercises((exercises) =>
-      exercises.map((ex) => (ex.id === exerciseId ? { ...ex, completed: !ex.completed } : ex)),
-    )
-  }
-
   // Save exercises to user profile
   const saveExercises = () => {
     // toast({
@@ -570,6 +471,7 @@ export default function IFSTherapy() {
   useEffect(()=>{
     if(sessionProgress == 100){
       uploadRecording()
+      setActiveTab("exercises")
     }
   },[sessionProgress])
 
@@ -694,106 +596,108 @@ export default function IFSTherapy() {
             )}
           </Card>
         </TabsContent>
-        <TabsContent value="exercises" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Personalized IFS Exercises</CardTitle>
-              <CardDescription>
-                Practice these exercises to deepen your understanding of your inner parts
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {generatedExercises.length > 0 ? (
-                <div className="space-y-4">
-                  {generatedExercises.map((exercise) => (
-                    <motion.div
-                      key={exercise.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
+        
+<TabsContent value="exercises" className="space-y-4">
+  <Card>
+    <CardHeader>
+      <CardTitle>Personalized IFS Exercises</CardTitle>
+      <CardDescription>
+        Practice these exercises to deepen your understanding of your inner parts
+      </CardDescription>
+    </CardHeader>
+    <CardContent>
+      {/* Filter exercises based on the selected mood */}
+      {exerciseTemplates[mood]?.length > 0 ? (
+        <div className="space-y-4">
+          {exerciseTemplates[mood].map((exercise, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Card>
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-lg">{exercise.title}</CardTitle>
+                      <CardDescription>{exercise.description}</CardDescription>
+                    </div>
+                    <Badge
+                      variant={
+                        exercise.type === "journaling"
+                          ? "default"
+                          : exercise.type === "meditation"
+                          ? "secondary"
+                          : exercise.type === "visualization"
+                          ? "outline"
+                          : "destructive"
+                      }
                     >
-                      <Card>
-                        <CardHeader className="pb-2">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <CardTitle className="text-lg">{exercise.title}</CardTitle>
-                              <CardDescription>{exercise.description}</CardDescription>
-                            </div>
-                            <Badge
-                              variant={
-                                exercise.type === "journaling"
-                                  ? "default"
-                                  : exercise.type === "meditation"
-                                    ? "secondary"
-                                    : exercise.type === "visualization"
-                                      ? "outline"
-                                      : "destructive"
-                              }
-                            >
-                              {exercise.type.charAt(0).toUpperCase() + exercise.type.slice(1)}
-                            </Badge>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="pb-2">
-                          <Accordion type="single" collapsible>
-                            <AccordionItem value="instructions">
-                              <AccordionTrigger>Instructions</AccordionTrigger>
-                              <AccordionContent>
-                                <ol className="list-decimal list-inside space-y-2">
-                                  {exercise.instructions.map((instruction, index) => (
-                                    <li key={index}>{instruction}</li>
-                                  ))}
-                                </ol>
-                              </AccordionContent>
-                            </AccordionItem>
-                          </Accordion>
-                        </CardContent>
-                        <CardFooter>
-                          <Button
-                            variant={exercise.completed ? "outline" : "default"}
-                            onClick={() => toggleExerciseCompletion(exercise.id)}
-                            className="w-full"
-                          >
-                            {exercise.completed ? (
-                              <>
-                                <CheckCircle className="mr-2 h-4 w-4" />
-                                Completed
-                              </>
-                            ) : (
-                              "Mark as Completed"
-                            )}
-                          </Button>
-                        </CardFooter>
-                      </Card>
-                    </motion.div>
-                  ))}
-                  <div className="flex justify-end">
-                    <Button onClick={saveExercises}>
-                      <Save className="mr-2 h-4 w-4" />
-                      Save Exercises to Profile
-                    </Button>
+                      {exercise.type.charAt(0).toUpperCase() + exercise.type.slice(1)}
+                    </Badge>
                   </div>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-[400px] text-center space-y-4">
-                  <Sparkles className="h-16 w-16 text-muted-foreground" />
-                  <h3 className="text-xl font-semibold">No Exercises Yet</h3>
-                  <p className="text-muted-foreground max-w-md">
-                    Complete a therapy session to receive personalized exercises based on your responses.
-                  </p>
+                </CardHeader>
+                <CardContent className="pb-2">
+                  <Accordion type="single" collapsible>
+                    <AccordionItem value="instructions">
+                      <AccordionTrigger>Instructions</AccordionTrigger>
+                      <AccordionContent>
+                        <ol className="list-decimal list-inside space-y-2">
+                          {exercise.instructions.map((instruction, index) => (
+                            <li key={index}>{instruction}</li>
+                          ))}
+                        </ol>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </CardContent>
+                <CardFooter>
                   <Button
-                    onClick={() => {
-                      setActiveTab("chat")
-                      startSession()
-                    }}
+                    variant={exercise.completed ? "outline" : "default"}
+                    onClick={() => toggleExerciseCompletion(exercise.id)}
+                    className="w-full"
                   >
-                    Start a Session
+                    {exercise.completed ? (
+                      <>
+                        <CheckCircle className="mr-2 h-4 w-4" />
+                        Completed
+                      </>
+                    ) : (
+                      "Mark as Completed"
+                    )}
                   </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          ))}
+          <div className="flex justify-end">
+            <Button onClick={saveExercises}>
+              <Save className="mr-2 h-4 w-4" />
+              Save Exercises to Profile
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center h-[400px] text-center space-y-4">
+          <Sparkles className="h-16 w-16 text-muted-foreground" />
+          <h3 className="text-xl font-semibold">No Exercises Yet</h3>
+          <p className="text-muted-foreground max-w-md">
+            Complete a therapy session to receive personalized exercises based on your responses.
+          </p>
+          <Button
+            onClick={() => {
+              setActiveTab("chat");
+              startSession();
+            }}
+          >
+            Start a Session
+          </Button>
+        </div>
+      )}
+    </CardContent>
+  </Card>
+</TabsContent>
 
       </Tabs>
 
