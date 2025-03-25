@@ -15,8 +15,6 @@ import { Provider } from 'react-redux'
 import store from '@/redux/store'
 import { JokeOfTheDay } from '@/components/joke-of-the-day'
 import { Toaster } from 'sonner';
-import { useEffect } from 'react';
-import useWalletLogin from '@/hooks/useWalletLogin';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -29,10 +27,10 @@ export default function RootLayout({
 
   const isActive = (path: string) => pathname === path;
 
-  const {connectWallet} = useWalletLogin();
-  useEffect(()=>{
-    connectWallet();
-  })
+  // const {connectWallet} = useWalletLogin();
+  // useEffect(()=>{
+  //   connectWallet();
+  // })
 
   return (
     <Provider store={store}>

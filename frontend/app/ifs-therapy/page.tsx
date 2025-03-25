@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import {  Mic, MicOff, Play, Pause, RotateCcw } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -21,6 +22,13 @@ import {
 import { motion } from "framer-motion"
 import { Send, Info, BookOpen, Save, CheckCircle, Clock, ArrowRight, Sparkles } from "lucide-react"
 import { format } from "date-fns"
+import { toast } from "sonner"
+const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`
+  }
+
 
 type MessageType = {
   id: string
@@ -284,6 +292,101 @@ export default function IFSTherapy() {
     setSessionProgress(0)
   }
 
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [recordingInterval, setRecordingInterval] = useState<NodeJS.Timeout | null>(null);
+  const [transcribedText, setTranscribedText] = useState("");
+  const [isListening, setIsListening] = useState(false);
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [audioStream, setAudioStream] = useState<MediaStream | null>(null);
+  
+  let recognition: SpeechRecognition | null = null;
+  if (typeof window !== "undefined") {
+    recognition = new ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition)();
+  }
+  
+  if (recognition) {
+    recognition.continuous = true;
+    recognition.lang = "en-US";
+    recognition.interimResults = true;
+  
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      const transcript = Array.from(event.results)
+        .map((result) => result[0].transcript)
+        .join(" ");
+      setTranscribedText(transcript);
+      setInput(transcript);
+    };
+  }
+  
+  const startRecording = async () => {
+    setIsRecording(true);
+    setRecordingTime(0);
+    setTranscribedText("");
+    if (recognition) recognition.start();
+  
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    setAudioStream(stream);
+  
+    const recorder = new MediaRecorder(stream);
+    setMediaRecorder(recorder);
+  
+    recorder.ondataavailable = (e) => {
+      if (e.data.size > 0) {
+        setAudioChunks((prev) => [...prev, e.data]); // Append new data to existing chunks
+      }
+    };
+  
+    recorder.start();
+  
+    const interval = setInterval(() => {
+      setRecordingTime((prev) => prev + 1);
+    }, 1000);
+    setRecordingInterval(interval);
+    toast("Your speech is now being recorded.");
+  };
+  
+  const stopRecording = () => {
+    setIsRecording(false);
+    if (recordingInterval) clearInterval(recordingInterval);
+    if (recognition) recognition.stop();
+    if (mediaRecorder) {
+      mediaRecorder.stop();
+    }
+    toast(`Recording saved (${formatTime(recordingTime)}).`);
+  };
+  
+  const resetRecording = () => {
+    setIsRecording(false);
+    setRecordingTime(0);
+    if (recordingInterval) clearInterval(recordingInterval);
+    setTranscribedText("");
+    setAudioChunks([]); // Reset recorded audio
+    if (audioStream) {
+      audioStream.getTracks().forEach((track) => track.stop()); // Stop all audio tracks
+      setAudioStream(null);
+    }
+    toast("Recording reset.");
+  };
+  
+  const downloadRecording = () => {
+    if (audioChunks.length === 0) {
+      toast("No audio recorded.");
+      return;
+    }
+    const blob = new Blob(audioChunks, { type: "audio/wav" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "full_recording.wav";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   // End the current therapy session and generate exercises
   const endSession = () => {
     if (!currentSession) return
@@ -369,57 +472,53 @@ export default function IFSTherapy() {
   }
 
   // Handle sending a message
-  const handleSendMessage = () => {
-    if (input.trim() === "") return
-
-    // Add user message
-    const userMessage: MessageType = {
+  const handleSendMessage = async () => {
+    if (!input.trim()) return;
+  
+    const newMessage: MessageType = {
       id: generateId(),
       role: "user",
       content: input,
       timestamp: new Date(),
+    };
+  
+    setMessages((prev) => [...prev, newMessage]);
+    setInput("");
+  
+    try {
+      const response = await fetch("/api/ifs-therapy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          transcribedText: input,
+          history: messages.map((m) => ({
+            user: m.role === "user" ? m.content : undefined,
+            ai: m.role === "bot" ? m.content : undefined,
+          })).filter(m => m.user || m.ai)
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (data.response) {
+        const botMessage: MessageType = {
+          id: generateId(),
+          role: "bot",
+          content: data.response,
+          timestamp: new Date(),
+        };
+  
+        setMessages((prev) => [...prev, botMessage]);
+  
+        // Update session progress based on message index
+        setSessionProgress((prev) => Math.min(prev + (100 / ifsPrompts.length), 100));
+      }
+    } catch (error) {
+      console.error("Error fetching AI response:", error);
     }
+  };
+  
 
-    const updatedMessages = [...messages, userMessage]
-    setMessages(updatedMessages)
-    setInput("")
-
-    // Update session progress
-    const newProgress = Math.min(100, Math.round((currentPromptIndex / (ifsPrompts.length - 1)) * 100))
-    setSessionProgress(newProgress)
-
-    // Get next prompt
-    setTimeout(() => {
-      const currentPrompt = ifsPrompts[currentPromptIndex]
-
-      // Add bot response
-      const botMessage: MessageType = {
-        id: generateId(),
-        role: "bot",
-        content: currentPrompt.content,
-        timestamp: new Date(),
-      }
-
-      setMessages([...updatedMessages, botMessage])
-
-      // Update current session
-      if (currentSession) {
-        setCurrentSession({
-          ...currentSession,
-          messages: [...updatedMessages, botMessage],
-        })
-      }
-
-      // Move to next prompt or end session
-      if (currentPrompt.followUp) {
-        const nextPromptIndex = ifsPrompts.findIndex((p) => p.id === currentPrompt.followUp)
-        setCurrentPromptIndex(nextPromptIndex !== -1 ? nextPromptIndex : currentPromptIndex + 1)
-      } else {
-        // End of prompts reached
-        endSession()
-      }
-    }, 1000)
-  }
 
   // Toggle exercise completion status
   const toggleExerciseCompletion = (exerciseId: string) => {
@@ -500,8 +599,8 @@ export default function IFSTherapy() {
               )}
             </CardContent>
             {isSessionActive && (
-              <CardFooter>
-                <form
+              <CardFooter className="flex items-center justify-center">
+                {/* <form
                   onSubmit={(e) => {
                     e.preventDefault()
                     handleSendMessage()
@@ -517,12 +616,46 @@ export default function IFSTherapy() {
                   <Button type="submit">
                     <Send className="h-4 w-4" />
                   </Button>
-                </form>
+                </form> */}
+
+                <div className="flex flex-col items-center justify-center space-y-6 py-10">
+                  <div className="relative w-32 h-32 rounded-full bg-secondary flex items-center justify-center">
+                    {isRecording ? (
+                      <div className="absolute inset-0 rounded-full animate-pulse bg-red-500/20"></div>
+                    ) : null}
+                    <div
+                      className={`w-24 h-24 rounded-full ${isRecording ? "bg-red-500" : "bg-primary"} flex items-center justify-center`}
+                    >
+                      {isRecording ? (
+                        <MicOff className="h-10 w-10 text-white" />
+                      ) : (
+                        <Mic className="h-10 w-10 text-white" />
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-2xl font-mono">{formatTime(recordingTime)}</div>
+                  <div className="flex space-x-4">
+                    {isRecording ? (
+                      <Button variant="destructive" onClick={stopRecording}>
+                        <Pause className="mr-2 h-4 w-4" /> Stop
+                      </Button>
+                    ) : (
+                      <Button onClick={startRecording}>
+                        <Play className="mr-2 h-4 w-4" /> Start Recording
+                      </Button>
+                    )}
+                    <Button variant="outline" onClick={resetRecording}>
+                      <RotateCcw className="mr-2 h-4 w-4" /> Reset
+                    </Button>
+                    <Button variant="outline" onClick={handleSendMessage}>
+                        <Send className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
               </CardFooter>
             )}
           </Card>
         </TabsContent>
-
         <TabsContent value="exercises" className="space-y-4">
           <Card>
             <CardHeader>
@@ -623,87 +756,10 @@ export default function IFSTherapy() {
             </CardContent>
           </Card>
         </TabsContent>
+
       </Tabs>
 
-      <Dialog open={showIntroDialog} onOpenChange={setShowIntroDialog}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>About Internal Family Systems (IFS) Therapy</DialogTitle>
-            <DialogDescription>Understanding the core concepts of IFS therapy</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p>
-              Internal Family Systems (IFS) is a transformative approach to psychotherapy that recognizes we all have
-              multiple sub-personalities or "parts" within our psyche. Developed by Dr. Richard Schwartz in the 1980s,
-              IFS provides a framework for understanding and healing these internal relationships.
-            </p>
-
-            <h3 className="text-lg font-semibold">Key Concepts in IFS</h3>
-
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="parts">
-                <AccordionTrigger>Parts of the Self</AccordionTrigger>
-                <AccordionContent>
-                  <p className="mb-2">IFS identifies three main types of parts:</p>
-                  <ul className="list-disc list-inside space-y-1">
-                    <li>
-                      <strong>Exiles:</strong> Vulnerable, young parts that carry pain, trauma, or shame
-                    </li>
-                    <li>
-                      <strong>Managers:</strong> Proactive protectors that try to keep exiles suppressed and maintain
-                      control
-                    </li>
-                    <li>
-                      <strong>Firefighters:</strong> Reactive protectors that activate when exiles break through, often
-                      using impulsive behaviors
-                    </li>
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="self">
-                <AccordionTrigger>The Core Self</AccordionTrigger>
-                <AccordionContent>
-                  <p>Beyond all parts is the "Self" – your core essence characterized by qualities like:</p>
-                  <ul className="list-disc list-inside space-y-1">
-                    <li>Compassion</li>
-                    <li>Curiosity</li>
-                    <li>Calmness</li>
-                    <li>Clarity</li>
-                    <li>Courage</li>
-                    <li>Confidence</li>
-                    <li>Creativity</li>
-                    <li>Connectedness</li>
-                  </ul>
-                  <p className="mt-2">The Self is the natural leader of your internal system when unburdened.</p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="process">
-                <AccordionTrigger>The IFS Process</AccordionTrigger>
-                <AccordionContent>
-                  <ol className="list-decimal list-inside space-y-1">
-                    <li>Identify parts that are active or causing distress</li>
-                    <li>Access Self energy to work with these parts</li>
-                    <li>Understand the role and purpose of each part</li>
-                    <li>Unburden parts from extreme beliefs and emotions</li>
-                    <li>Restore harmony to the internal system</li>
-                  </ol>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <p>
-              This chatbot will guide you through a simplified IFS process, helping you identify and work with your
-              parts. While it&#39;s a helpful tool for self-exploration, it&lsquo;s not a replacement for working with a trained
-              IFS therapist.
-            </p>
-          </div>
-          <DialogFooter>
-            <Button onClick={() => setShowIntroDialog(false)}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+    
     </div>
   )
 }
