@@ -83,7 +83,7 @@ export const useFitbit = () => {
   const fetchActivitySummary = async (accessToken: string) => {
     try {
       const response = await fetch(
-        'https://api.fitbit.com/1/user/-/activities/date/2025-03-09.json',
+        'https://api.fitbit.com/1/user/-/activities/date/2025-03-26.json',
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

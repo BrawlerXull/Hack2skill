@@ -22,17 +22,20 @@ export default function Home() {
         <main className="pt-24 pb-16">
           <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center space-y-4 animate-fadeInUp">
-              <div className="inline-flex items-center bg-pink-100 text-pink-600 rounded-full px-4 py-2 text-sm font-medium">
+            <Image src="/logo.png" width={200} height={200} alt="" className='mx-auto'/>
+              <div className="inline-flex items-center bg-blue-100 text-blue-600 rounded-full px-4 py-2 text-sm font-medium">
                 <Heart className="w-4 h-4 mr-2" />
                 AI-Powered Wellness Companion
-                <span className="ml-2 px-2 py-0.5 bg-pink-500 text-white rounded-full text-xs">
+                <span className="ml-2 px-2 py-0.5 bg-blue-500 text-white rounded-full text-xs">
                   New
                 </span>
               </div>
 
+              
+
               <h1 className="text-5xl text-blue-400 sm:text-6xl font-bold">
               Experience Instant {" "}
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-pink-500">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-500">
                 Mental Wellness Support
                 </span>
               </h1>
@@ -43,7 +46,7 @@ export default function Home() {
                 Our AI analyzes your needs and suggests personalized coping mechanisms, like mindfulness, journaling, and stress management.
               </p>
               <Link href="/chatbot" className="flex justify-center gap-4 mt-8">
-                <button className="rounded-full px-8 py-6 text-lg gap-2 bg-pink-500 hover:bg-pink-600 text-white inline-flex items-center">
+                <button className="rounded-full px-8 py-6 text-lg gap-2 bg-blue-500 hover:bg-blue-600 text-white inline-flex items-center">
                   Start Your Wellness Journey <ArrowRight className="ml-2" size={18} />
                 </button>
               </Link>
@@ -54,13 +57,13 @@ export default function Home() {
               <div className="grid md:grid-cols-2 gap-12 items-center">
                 <div className="space-y-6">
                   <div className="inline-flex items-center space-x-2">
-                    <AlertCircle className="text-pink-500 w-6 h-6" />
+                    <AlertCircle className="text-blue-500 w-6 h-6" />
                     <h2 className="text-3xl font-bold">Why Mental Wellness Matters</h2>
                   </div>
                   <div className="space-y-4">
                     <div className="flex items-start space-x-3">
-                      <div className="w-6 h-6 rounded-full bg-pink-100 flex items-center justify-center mt-1">
-                        <span className="text-pink-500 font-semibold">1</span>
+                      <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mt-1">
+                        <span className="text-blue-500 font-semibold">1</span>
                       </div>
                       <div>
                         <h3 className="font-semibold text-lg">
@@ -72,8 +75,8 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
-                      <div className="w-6 h-6 rounded-full bg-pink-100 flex items-center justify-center mt-1">
-                        <span className="text-pink-500 font-semibold">2</span>
+                      <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mt-1">
+                        <span className="text-blue-500 font-semibold">2</span>
                       </div>
                       <div>
                         <h3 className="font-semibold text-lg">Save Time</h3>
@@ -83,8 +86,8 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
-                      <div className="w-6 h-6 rounded-full bg-pink-100 flex items-center justify-center mt-1">
-                        <span className="text-pink-500 font-semibold">3</span>
+                      <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mt-1">
+                        <span className="text-blue-500 font-semibold">3</span>
                       </div>
                       <div>
                         <h3 className="font-semibold text-lg">
@@ -103,7 +106,7 @@ export default function Home() {
                       <div className="bg-gray-800 rounded-t-xl p-2 aspect-[16/10]">
                         <div className="bg-white rounded-lg h-full p-4 overflow-hidden">
                           <Image
-                            src="/image2.png"
+                            src="/dashboard.png"
                             alt="AI Wellness Companion Dashboard"
                             className="w-full h-full object-cover rounded"
                             layout="responsive"
@@ -140,9 +143,9 @@ export default function Home() {
               ].map((feature, index) => (
                 <div
                   key={index}
-                  className="bg-white p-8 rounded-xl border border-pink-100 hover:shadow-xl transition-shadow"
+                  className="bg-white p-8 rounded-xl border border-blue-100 hover:shadow-xl transition-shadow"
                 >
-                  <Check className="text-pink-500 mb-4" size={24} />
+                  <Check className="text-blue-500 mb-4" size={24} />
                   <h3 className="text-xl font-semibold mb-2">
                     {feature.title}
                   </h3>
@@ -152,7 +155,7 @@ export default function Home() {
             </section>
           </section>
 
-          <section className="bg-pink-500 text-white mt-24 py-16">
+          <section className="bg-blue-500 text-white mt-24 py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center animate-fadeInUp">
                 <h2 className="text-3xl font-bold mb-4">
@@ -161,7 +164,7 @@ export default function Home() {
                 <p className="text-xl mb-8">
                   Help us improve by sharing your experience with our AI-powered wellness companion.
                 </p>
-                <button className="px-6 py-3 bg-white text-pink-500 rounded-full hover:bg-pink-50 transition-all duration-300 ease-in-out hover:scale-105">
+                <button className="px-6 py-3 bg-white text-blue-500 rounded-full hover:bg-blue-50 transition-all duration-300 ease-in-out hover:scale-105">
                   Give Feedback
                 </button>
               </div>
@@ -169,12 +172,12 @@ export default function Home() {
           </section>
         </main>
 
-        <footer className="bg-white border-t border-pink-100">
+        <footer className="bg-white border-t border-blue-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="grid md:grid-cols-2 gap-8">
               <div>
                 <h3 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                  <Mic className="w-8 h-8 text-pink-500" />
+                  <Mic className="w-8 h-8 text-blue-500" />
                   Mind Mitra
                 </h3>
                 <p className="text-gray-600">
