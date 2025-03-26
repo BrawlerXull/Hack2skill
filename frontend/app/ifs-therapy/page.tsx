@@ -451,7 +451,7 @@ export default function IFSTherapy() {
   
         // Update session progress based on message index
         // setSessionProgress((prev) => Math.min(prev + (100 / ifsPrompts.length), 100));
-        setSessionProgress((prev) => prev + 100);
+        setSessionProgress((prev) => prev + 50);
 
       }
     } catch (error) {
