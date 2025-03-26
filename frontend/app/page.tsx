@@ -175,7 +175,7 @@ export default function Home() {
               <div>
                 <h3 className="text-2xl font-semibold mb-4 flex items-center gap-2">
                   <Mic className="w-8 h-8 text-pink-500" />
-                  WellnessAI
+                  Mind Mitra
                 </h3>
                 <p className="text-gray-600">
                   Improve your mental health effortlessly with AI-powered support.
