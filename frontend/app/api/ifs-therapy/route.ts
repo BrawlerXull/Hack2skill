@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
       return new NextResponse("GEMINI_API_KEY is missing", { status: 500 });
     }
 
-    const { transcribedText, history } = await req.json();
+    const { transcribedText, history , checkIns } = await req.json();
     if (!transcribedText || !Array.isArray(history)) {
       return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
     }
@@ -156,6 +156,8 @@ If still blended, inform the user that some blending with the exile is okay as l
     const prompt = `
       ${systemMessage}
       ${conversationHistory}
+
+      Users's Journaling done on the platform are you may narrate the reponse accordingly : ${checkIns}
 
       User: "${transcribedText}"
       

@@ -493,45 +493,18 @@ export default function PublicSpeaking() {
 
                     {speechFeedback ? (
                       <div className="space-y-4 mt-4">
-                        <h3 className="font-semibold">Performance Analysis:</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label>Clarity</Label>
-                            <Progress value={speechFeedback.clarity} />
-                            <p className="text-xs text-right">{speechFeedback.clarity}/100</p>
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Pace</Label>
-                            <Progress value={speechFeedback.pace} />
-                            <p className="text-xs text-right">{speechFeedback.pace}/100</p>
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Content</Label>
-                            <Progress value={speechFeedback.content} />
-                            <p className="text-xs text-right">{speechFeedback.content}/100</p>
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Confidence</Label>
-                            <Progress value={speechFeedback.confidence} />
-                            <p className="text-xs text-right">{speechFeedback.confidence}/100</p>
-                          </div>
-                        </div>
 
-                        <div className="pt-4">
-                          <div className="flex items-center justify-between">
-                            <h3 className="font-semibold">Overall Score:</h3>
-                            <Badge className="text-lg px-3 py-1">{speechFeedback.overallScore}/100</Badge>
-                          </div>
-                        </div>
 
-                        <div className="space-y-2">
+
+
+                        {/* <div className="space-y-2">
                           <h3 className="font-semibold">Strengths:</h3>
                           <ul className="list-disc list-inside space-y-1">
                             {speechFeedback.strengths.map((strength, index) => (
                               <li key={index}>{strength}</li>
                             ))}
                           </ul>
-                        </div>
+                        </div> */}
 
                         <div className="space-y-2">
                           <h3 className="font-semibold">Areas for Improvement:</h3>

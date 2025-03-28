@@ -23,6 +23,8 @@ import { motion } from "framer-motion"
 import { Send, Info, BookOpen, Save, CheckCircle, Clock, ArrowRight, Sparkles } from "lucide-react"
 import { format } from "date-fns"
 import { toast } from "sonner"
+import { useMoodCalendar } from "@/hooks/useMoodCalendar"
+import { useUser } from "@clerk/nextjs"
 const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
@@ -410,6 +412,9 @@ export default function IFSTherapy() {
     });
   };
 
+  const { user } = useUser()
+
+  
   // Handle sending a message
   const handleSendMessage = async () => {
     if (!input.trim()) return;
@@ -423,8 +428,24 @@ export default function IFSTherapy() {
   
     setMessages((prev) => [...prev, newMessage]);
     setInput("");
+
+
+ 
+
+    
   
     try {
+      const res = await fetch(`/api/check-in?userId=${user?.id}`)
+
+      const data = await res.json()
+
+      if (!res.ok) throw new Error(data.error || "Failed to fetch check-ins")
+
+        const checkIns = data.checkIns.map((checkIn: any) => ({
+            ...checkIn,
+            createdAt: new Date(checkIn.createdAt + "T00:00:00Z"), // Normalize date to midnight UTC
+          }))
+
       const response = await fetch("/api/ifs-therapy", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -433,17 +454,18 @@ export default function IFSTherapy() {
           history: messages.map((m) => ({
             user: m.role === "user" ? m.content : undefined,
             ai: m.role === "bot" ? m.content : undefined,
-          })).filter(m => m.user || m.ai)
+          })).filter(m => m.user || m.ai),
+          checkIns: checkIns,
         }),
       });
   
-      const data = await response.json();
+      const data2 = await response.json();
   
-      if (data.response) {
+      if (data2.response) {
         const botMessage: MessageType = {
           id: generateId(),
           role: "bot",
-          content: data.response,
+          content: data2.response,
           timestamp: new Date(),
         };
   
@@ -451,7 +473,7 @@ export default function IFSTherapy() {
   
         // Update session progress based on message index
         // setSessionProgress((prev) => Math.min(prev + (100 / ifsPrompts.length), 100));
-        setSessionProgress((prev) => prev + 50);
+        setSessionProgress((prev) => prev + 40);
 
       }
     } catch (error) {
@@ -469,7 +491,7 @@ export default function IFSTherapy() {
   }
 
   useEffect(()=>{
-    if(sessionProgress == 100){
+    if(sessionProgress == 120){
       uploadRecording()
       setActiveTab("exercises")
     }

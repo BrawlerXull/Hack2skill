@@ -27,6 +27,7 @@
     "@reduxjs/toolkit": "^2.5.0",
     "@tensorflow-models/blazeface": "^0.1.0",
     "@tensorflow/tfjs": "^4.22.0",
+    "@vapi-ai/web": "^2.2.4",
     "@vercel/analytics": "^1.4.1",
     "chart.js": "^4.4.8",
     "class-variance-authority": "^0.7.1",

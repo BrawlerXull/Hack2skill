@@ -10,6 +10,7 @@ interface CheckInData {
 }
 
 export async function GET(req: Request) {
+  await connectToDatabase();
     try {
       const url = new URL(req.url);
       const userId = url.searchParams.get('userId');
@@ -39,6 +40,7 @@ export async function GET(req: Request) {
   }
 
 export async function POST(req: Request) {
+  await connectToDatabase();
   try {
     const { userId, mood, activities, thoughts }: CheckInData = await req.json();
     if (!userId) {
